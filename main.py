@@ -25,7 +25,6 @@ def main(robotIP, PORT = 9559):
     # Create proxy to ALBasicAwareness
     basic_awareness = ALProxy("ALBasicAwareness",robotIP, PORT)
 
-
     # Create proxy to ALVideoRecorder
     videoRecorderProxy = ALProxy("ALVideoRecorder", robotIP, PORT)
 
@@ -37,6 +36,10 @@ def main(robotIP, PORT = 9559):
 
     #Creat proxy to ALMemory
     memoryProxy = ALProxy("ALMemory", robotIP, PORT)
+
+    # Wake up the Robot
+    motionProxy.wakeUp()
+    motionProxy.moveInit()
 
     # Stop awareness and lock the head
     basic_awareness.stopAwareness()
@@ -53,25 +56,30 @@ def main(robotIP, PORT = 9559):
     videoRecorderProxy.setResolution(2)
     videoRecorderProxy.startRecording("/home/nao/recordings/cameras", "test")
 
-    for i in range(0,1):
+    laserValue = [0 , 0]
 
-        laserValue = [0 , 0]
+    start = time.time()
 
-        #Move 1 meter
-        motionProxy.post.moveTo(0.5, 0.0, 0.0)
+    #Move forward for 1 min
+    motionProxy.moveToward(0.7, 0.0, -0.05)
 
-        #Get data every 1 sec till the end of move
-        while motionProxy.moveIsActive():
-            while(laserValue[1] and motionProxy.moveIsActive()):
-                laserValue = checkIfLaserChanged(laserValue[0] ,laserProxy ,memoryProxy)
-            os.system("sh getData.sh")
-            laserValue[1] = 1
-            print "raft"
+    #Get data every 1 sec till the end of move
+    while ((time.time() - start) < 60):
+        #while(laserValue[1] and ((time.time() - start) < 60)):
+        #    laserValue = checkIfLaserChanged(laserValue[0] ,laserProxy ,memoryProxy)
+        os.system("sh getData.sh")
+        laserValue[1] = 1
+        print "raft"
+        time.sleep(1)
+
+    motionProxy.stopMove()
 
     #stop recording
-    videoInfo = videoRecorderProxy.stopRecording()
+    videoRecorderProxy.stopRecording()
 
     basic_awareness.startAwareness()
+
+    motionProxy.rest()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

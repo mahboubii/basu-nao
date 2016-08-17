@@ -1,4 +1,7 @@
+import time
 from naoqi import ALProxy
+
+starttime = time.time()
 
 robotIP = "nao.local"
 PORT = 9559
@@ -37,3 +40,9 @@ target.close()
 
 # Turning sensor OFF
 sonarProxy.unsubscribe("myApplication")
+
+endtime = time.time()
+
+target = open("logSonar.txt", 'a')
+target.write("sonar: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
+target.close()

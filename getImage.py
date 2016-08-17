@@ -1,4 +1,7 @@
+import time
 from naoqi import ALProxy
+
+starttime = time.time()
 
 IP = "nao.local"
 PORT = 9559
@@ -19,14 +22,25 @@ target.close()
 topName = "imaget" + str(count)
 botName = "imageb" + str(count)
 
+photoCaptureProxy.setHalfPressEnabled(True)
+
 #Set image attribute
-photoCaptureProxy.setResolution(2)
+photoCaptureProxy.setResolution(0)
 photoCaptureProxy.setPictureFormat("jpg")
 photoCaptureProxy.setCameraID(0)
 
 #Save top picture on NAO
 photoCaptureProxy.takePicture("/home/nao/recordings/cameras/", topName)
 
+
 #Save bottom picture on NAO
 photoCaptureProxy.setCameraID(1)
 photoCaptureProxy.takePicture("/home/nao/recordings/cameras/", botName)
+
+photoCaptureProxy.setHalfPressEnabled(False)
+
+endtime = time.time()
+
+target = open("logimage.txt", 'a')
+target.write("Image: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
+target.close()

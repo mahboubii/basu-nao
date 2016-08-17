@@ -1,4 +1,8 @@
+import time
 from naoqi import ALProxy
+
+starttime = time.time()
+
 
 robotIP = "nao.local"
 PORT = 9559
@@ -33,4 +37,10 @@ for item in laserData:
     target.write(str(item[1]))
     target.write("\n")
 target.write("\n")
+target.close()
+
+endtime = time.time()
+
+target = open("logLaser.txt", 'a')
+target.write("Laser: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
 target.close()
