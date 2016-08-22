@@ -4,6 +4,7 @@ import time
 import argparse
 import almath
 from naoqi import ALProxy
+from getData import Data
 
 def checkIfLaserChanged(oldData, laserProxy, memoryProxy):
     #Set the laser ON
@@ -62,15 +63,18 @@ def main(robotIP, PORT = 9559):
 
     #Move forward for 1 min
     motionProxy.moveToward(0.7, 0.0, -0.05)
-
+    dataObj = Data()
     #Get data every 1 sec till the end of move
     while ((time.time() - start) < 60):
         #while(laserValue[1] and ((time.time() - start) < 60)):
         #    laserValue = checkIfLaserChanged(laserValue[0] ,laserProxy ,memoryProxy)
-        os.system("sh getData.sh")
+        dataObj.getData()
         laserValue[1] = 1
         print "raft"
         time.sleep(1)
+
+
+    dataObj.closeFiles()
 
     motionProxy.stopMove()
 

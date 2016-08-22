@@ -1,48 +1,52 @@
 import time
 from naoqi import ALProxy
 
-starttime = time.time()
-
 robotIP = "nao.local"
 PORT = 9559
-
-# Create proxy to ALMemory
-memoryProxy = ALProxy("ALMemory", robotIP, PORT)
-
-# Create proxy to ALSonar
-sonarProxy = ALProxy("ALSonar", robotIP, PORT)
 
 RVal = "Device/SubDeviceList/US/Right/Sensor/Value"
 LVal = "Device/SubDeviceList/US/Left/Sensor/Value"
 
-# Turning sensor ON
-sonarProxy.subscribe("myApplication")
+class Sonar:
+    def __init__(self):
+       # Create proxy to ALMemory
+       self.memoryProxy = ALProxy("ALMemory", robotIP, PORT)
 
-#Save right sonar data
-target = open("rightSonar.txt", 'a')
-target.write(str(memoryProxy.getData(RVal)))
-target.write("\n")
-for i in range(1,10):
-    target.write(str(memoryProxy.getData(RVal + str(i))))
-    target.write("\n")
-target.write("\n")
-target.close()
+       # Create proxy to ALSonar
+       self.sonarProxy = ALProxy("ALSonar", robotIP, PORT)
 
-#Save left sonar data
-target = open("leftSonar.txt", 'a')
-target.write(str(memoryProxy.getData(LVal)))
-target.write("\n")
-for i in range(1,10):
-    target.write(str(memoryProxy.getData(LVal + str(i))))
-    target.write("\n")
-target.write("\n")
-target.close()
+       self.target = open("time.txt", 'a')
 
-# Turning sensor OFF
-sonarProxy.unsubscribe("myApplication")
+       # Turning sensor ON
+       self.sonarProxy.subscribe("myApplication")
 
-endtime = time.time()
 
-target = open("logSonar.txt", 'a')
-target.write("sonar: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
-target.close()
+       self.target1 = open("rightSonar.txt", 'a')
+
+       self.target2 = open("leftSonar.txt", 'a')
+
+
+    def getSonar(self):
+
+        #Save right sonar data
+        self.target1.write(str(self.memoryProxy.getData(RVal)))
+        self.target1.write("\n")
+        for i in range(1,10):
+            self.target1.write(str(self.memoryProxy.getData(RVal + str(i))))
+        self.target1.write("\n")
+        self.target1.write("\n")
+
+        #Save left sonar data
+        self.target2.write(str(self.memoryProxy.getData(LVal)))
+        self.target2.write("\n")
+        for i in range(1,10):
+            self.target2.write(str(self.memoryProxy.getData(LVal + str(i))))
+            self.target2.write("\n")
+        self.target2.write("\n")
+
+
+    def closeFile(self):
+        self.target1.close()
+        self.target2.close()
+        # Turning sensor OFF
+        self.sonarProxy.unsubscribe("myApplication")

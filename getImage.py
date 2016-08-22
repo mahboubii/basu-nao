@@ -1,46 +1,42 @@
 import time
 from naoqi import ALProxy
 
-starttime = time.time()
-
 IP = "nao.local"
 PORT = 9559
 
-# Create a proxy to ALPhotoCapture
-photoCaptureProxy = ALProxy("ALPhotoCapture", IP, PORT)
+class Image:
+    def __init__(self):
+        # Create a proxy to ALPhotoCapture
+        self.photoCaptureProxy = ALProxy("ALPhotoCapture", IP, PORT)
 
-#Indicating index of next image file
-target = open("count.txt", 'r+')
-lines = target.readlines()
-count = int(lines[0])
-target.seek(0)
-target.truncate()
-target.write(str(count + 1))
-target.close()
+        self.photoCaptureProxy.setHalfPressEnabled(True)
 
-#Exact the file name to store
-topName = "imaget" + str(count)
-botName = "imageb" + str(count)
+        #Set image attribute
+        self.photoCaptureProxy.setResolution(0)
+        self.photoCaptureProxy.setPictureFormat("jpg")
 
-photoCaptureProxy.setHalfPressEnabled(True)
+    def getImage(self):
 
-#Set image attribute
-photoCaptureProxy.setResolution(0)
-photoCaptureProxy.setPictureFormat("jpg")
-photoCaptureProxy.setCameraID(0)
+        #Indicating index of next image file
+        count = open("count.txt", 'r+')
+        lines = count.readlines()
+        countNum = int(lines[0])
+        count.seek(0)
+        count.truncate()
+        count.write(str(countNum + 1))
+        count.close()
 
-#Save top picture on NAO
-photoCaptureProxy.takePicture("/home/nao/recordings/cameras/", topName)
+        #Exact the file name to store
+        topName = "imaget" + str(countNum)
+        botName = "imageb" + str(countNum)
 
+        #Save top picture on NAO
+        self.photoCaptureProxy.setCameraID(0)
+        self.photoCaptureProxy.takePicture("/home/nao/recordings/cameras/", topName)
 
-#Save bottom picture on NAO
-photoCaptureProxy.setCameraID(1)
-photoCaptureProxy.takePicture("/home/nao/recordings/cameras/", botName)
+        #Save bottom picture on NAO
+        self.photoCaptureProxy.setCameraID(1)
+        self.photoCaptureProxy.takePicture("/home/nao/recordings/cameras/", botName)
 
-photoCaptureProxy.setHalfPressEnabled(False)
-
-endtime = time.time()
-
-target = open("logimage.txt", 'a')
-target.write("Image: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
-target.close()
+    def closeFile(self):
+        self.photoCaptureProxy.setHalfPressEnabled(False)

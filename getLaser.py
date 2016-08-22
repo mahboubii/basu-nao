@@ -1,46 +1,48 @@
 import time
 from naoqi import ALProxy
 
-starttime = time.time()
-
 
 robotIP = "nao.local"
 PORT = 9559
 
-#Creat proxy to ALLaser
-laserProxy = ALProxy("ALLaser", robotIP, PORT)
+class Laser:
+    def __init__(self):
+        #Creat proxy to ALLaser
+        self.laserProxy = ALProxy("ALLaser", robotIP, PORT)
 
-#Creat proxy to ALMemory
-memoryProxy = ALProxy("ALMemory", robotIP, PORT)
+        #Creat proxy to ALMemory
+        self.memoryProxy = ALProxy("ALMemory", robotIP, PORT)
 
-#Set the laser ON
-laserProxy.laserON()
+        #Set the laser ON
+        self.laserProxy.laserON()
 
-#Save laser data in variable laserData
-laserData = memoryProxy.getData("Device/Laser/Value")
+        self.target1 = open("laserCartesian.txt", 'a')
 
-#Save Cartesian coordinations
-target = open("laserCartesian.txt", 'a')
-for item in laserData:
-    target.write(str(item[2]))
-    target.write(",")
-    target.write(str(item[3]))
-    target.write("\n")
-target.write("\n")
-target.close()
+        self.target2 = open("laserPolar.txt", 'a')
 
-#Save Polar coordinations
-target = open("laserPolar.txt", 'a')
-for item in laserData:
-    target.write(str(item[0]))
-    target.write(",")
-    target.write(str(item[1]))
-    target.write("\n")
-target.write("\n")
-target.close()
+    def getLaser(self):
+        #Save laser data in variable laserData
+        laserData = self.memoryProxy.getData("Device/Laser/Value")
 
-endtime = time.time()
+        #Save Cartesian coordinations
+        for item in laserData:
+            self.target1.write(str(item[2]))
+            self.target1.write(",")
+            self.target1.write(str(item[3]))
+            self.target1.write("\n")
+        self.target1.write("\n")
 
-target = open("logLaser.txt", 'a')
-target.write("Laser: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
-target.close()
+        #Save Polar coordinations
+        self.target2 = open("laserPolar.txt", 'a')
+        for item in laserData:
+            self.target2.write(str(item[0]))
+            self.target2.write(",")
+            self.target2.write(str(item[1]))
+            self.target2.write("\n")
+        self.target2.write("\n")
+
+    def closeFile(self):
+        
+        self.laserProxy.laserOFF()
+        self.target1.close()
+        self.target2.close()

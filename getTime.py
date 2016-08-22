@@ -1,24 +1,21 @@
 import time
 from naoqi import ALProxy
 
-starttime = time.time()
-
 robotIP = "nao.local"
 PORT = 9559
 
-# Create a proxy to DCM
-dcmProxy = ALProxy("DCM",robotIP,PORT)
+class Time:
+    def __init__(self):
 
-#Write down the current time extracted from robot time
-target = open("time.txt", 'a')
+        # Create a proxy to DCM
+        self.dcmProxy = ALProxy("DCM",robotIP,PORT)
+        self.target = open("time.txt", 'a')
 
-target.write(str(dcmProxy.getTime(0)))
-target.write("\n")
+    def getTime(self):
 
-target.close()
+        #Write down the current time extracted from robot time
+        self.target.write(str(self.dcmProxy.getTime(0)))
+        self.target.write("\n")
 
-endtime = time.time()
-
-target = open("logtime.txt", 'a')
-target.write("time: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
-target.close()
+    def closeFile(self):
+        self.target.close()

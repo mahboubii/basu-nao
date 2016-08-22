@@ -4,22 +4,22 @@ import time
 robotIP = "nao.local"
 PORT = 9559
 
-starttime = time.time()
-
-#Creat proxy to ALMotion
-motionProxy = ALProxy("ALMotion", robotIP, PORT)
-
-#Save position in position.txt
-target = open("position.txt", 'a')
 useSensorValues = True
 
-target.write(str(motionProxy.getRobotPosition(useSensorValues)))
-target.write("\n")
+class RobotPosition:
+    def __init__(self):
+        #Creat proxy to ALMotion
+        self.motionProxy = ALProxy("ALMotion", robotIP, PORT)
 
-target.close()
+        #Save position in position.txt
+        self.target = open("position.txt", 'a')
 
-endtime = time.time()
 
-target = open("logPose.txt", 'a')
-target.write("robot position: %s -> %s : %s \n" % (str(starttime), str(endtime), str(endtime - starttime)))
-target.close()
+    def getRobotPosition(self):
+        #Write down the current time extracted from robot time
+
+        self.target.write(str(self.motionProxy.getRobotPosition(useSensorValues)))
+        self.target.write("\n")
+
+    def closeFile(self):
+        self.target.close()
