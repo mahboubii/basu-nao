@@ -48,7 +48,7 @@ def main(robotIP, PORT = 9559):
 
     # Setting the straight in the horizon
     names      = ["HeadYaw", "HeadPitch"]
-    angleLists = [0.0*almath.TO_RAD, 0.0*almath.TO_RAD]
+    angleLists = [0.0*almath.TO_RAD, (-7)*almath.TO_RAD]
     timeLists  = [0.5, 0.5]
     isAbsolute = True
     motionProxy.angleInterpolation(names, angleLists, timeLists, isAbsolute)

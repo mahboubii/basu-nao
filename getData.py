@@ -4,6 +4,7 @@ from getImage import Image
 from getLaser import Laser
 from getSonar import Sonar
 from getRobotPosition import RobotPosition
+from getHeadPose import HeadPose
 
 class Data:
 
@@ -14,6 +15,7 @@ class Data:
         self.laser = Laser()
         self.sonar = Sonar()
         self.pose = RobotPosition()
+        self.headPose = HeadPose()
 
     def getData(self):
 
@@ -22,11 +24,13 @@ class Data:
         threading.Thread(target=self.laser.getLaser).start()
         threading.Thread(target=self.sonar.getSonar).start()
         threading.Thread(target=self.pose.getRobotPosition).start()
+        threading.Thread(target=self.headPose.getHeadPose).start()
 
     def closeFiles(self):
-        
+
         self.time.closeFile()
         self.image.closeFile()
         self.laser.closeFile()
         self.sonar.closeFile()
         self.pose.closeFile()
+        self.headPose.closeFile()

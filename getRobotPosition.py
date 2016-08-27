@@ -4,7 +4,7 @@ import time
 robotIP = "nao.local"
 PORT = 9559
 
-useSensorValues = True
+useSensorValues = False
 
 class RobotPosition:
     def __init__(self):
